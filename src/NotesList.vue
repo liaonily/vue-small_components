@@ -4,7 +4,7 @@
     <Spinner v-if="loading" />
     <ul>
       <li v-for="(note,index) in notes" :key="index">
-        <img src="note.images[0]" alt="note-images">
+        <img :src="getImageUrl(note.images[2].url)" alt="note-images" width="30" height="30">
         <a>{{note.title}}</a>
       </li>
     </ul>
@@ -55,6 +55,11 @@ export default {
       this.start = arguments[0] - 1
       this.notes = []
       this.fetchData()
+    },
+    getImageUrl (srcUrl) {
+      if (srcUrl !== undefined) {
+        return srcUrl.replace(/http\w{0,1}:\/\//g, 'https://images.weserv.nl/?url=')
+      }
     }
     // fecth方法
     // fetchData () {
