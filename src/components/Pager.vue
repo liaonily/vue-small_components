@@ -1,11 +1,10 @@
 <template lang="html">
   <div>
-    <h2>改进版，适合各种页数</h2>
     <div class="page">
       <ul class="page-number">
         <li><a href="#" @click="goPrev">上一页</a></li>
         <li :class="{active: first.value === currentPageNumber}"><a href="#" @click="beCurrentPage(first)">{{first.value}}</a></li>
-        <li v-if="visiblePagesOf5.length <= 0">
+        <li v-if="visiblePagesOf5.length <= 0 && total > 1">
           <a href="#" @click = "openPrev">...</a>
         </li>
         <li v-if="visiblePagesOf5.length > 0 && visiblePagesOf5[0].value - 1 > 1">
@@ -38,8 +37,7 @@
 export default {
   props: {
     total: {
-      type: Number,
-      default: 100
+      type: Number
     }
   },
   data () {
@@ -47,15 +45,24 @@ export default {
       first: {
         value: 1
       },
-      last: {
-        value: this.total
-      },
       jumpPageNumber: '',
       beginPageOf5: 1, // 连续5页的首页，当它变化，显示页数变化
       currentPageNumber: 1
     }
   },
+  watch: {
+    currentPageNumber: function () {
+      console.log(this.last.value)
+      console.log(2, this.currentPageNumber)
+      this.$emit('pageChange', this.currentPageNumber)
+    }
+  },
   computed: {
+    last () {
+      return {
+        value: this.total === 1 ? 1 : this.total
+      }
+    },
     continousFivePages () {
       let arr = []
       let beginPageOf5 = this.beginPageOf5
@@ -84,7 +91,6 @@ export default {
   methods: {
     beCurrentPage (page) {
       this.currentPageNumber = page.value
-      console.log(this.currentPageNumber)
     },
     jumpPage (pageNumber) {
       this.beginPageOf5 = pageNumber - 2
@@ -96,7 +102,6 @@ export default {
         this.currentPageNumber = pageNumber
       }
       this.jumpPageNumber = ''
-      console.log(this.currentPageNumber)
     },
     goPrev () {
       let currentPageNumber = this.currentPageNumber > 1 ? this.currentPageNumber - 1 : 1
